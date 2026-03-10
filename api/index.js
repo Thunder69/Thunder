@@ -6,7 +6,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Number is required" });
     }
 
-    const api = `https://api.paanel.shop/numapi.php?action=api&key=lkjhsalaar&number==${number}`;
+    const api = `https://api.paanel.shop/numapi.php?action=api&key=lkjhsalaar&number=${number}`;
 
     const response = await fetch(api);
     let data = await response.text();
