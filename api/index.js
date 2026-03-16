@@ -6,19 +6,26 @@ export default async function handler(req, res) {
       return res.status(400).send("num parameter required");
     }
 
-    const url = `https://errorapi.gt.tc/numtoupi.php?num=${num}`;
+    const apiUrl = `https://errorapi.gt.tc/numtoupi.php?num=${encodeURIComponent(num)}`;
 
-    const response = await fetch(url);
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "*/*"
+      }
+    });
+
     let data = await response.text();
 
-    // Hide all @usernames
+    // Hide all @username
     data = data.replace(/@\w+/g, "");
 
     // Hide all https links
     data = data.replace(/https?:\/\/\S+/g, "");
 
-    // Add your credit everywhere
-    data = data + "\ncredit @OsxSpace";
+    // Always add your credit
+    data += "\ncredit @OsxSpace";
 
     res.status(200).send(data);
 
