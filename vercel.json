@@ -1,0 +1,4 @@
+{
+  "version": 2,
+  "routes": [{ "src": "/Instagram(.*)", "dest": "/api/Instagram.js" }]
+}
