@@ -1,27 +1,28 @@
 export default async function handler(req, res) {
   try {
-    const { number } = req.query;
+    const { num } = req.query;
 
-    if (!number) {
-      return res.status(400).json({ error: "Number is required" });
+    if (!num) {
+      return res.status(400).send("num parameter required");
     }
 
-    const api = `https://api.paanel.shop/numapi.php?action=api&key=lkjhsalaar&number=${number}`;
+    const url = `https://errorapi.gt.tc/numtoupi.php?num=${num}`;
 
-    const response = await fetch(api);
+    const response = await fetch(url);
     let data = await response.text();
 
-    // Hide unwanted usernames
-    data = data.replace(/@UseSir/gi, "");
-    data = data.replace(/@overshade/gi, "");
+    // Hide all @usernames
+    data = data.replace(/@\w+/g, "");
 
-    // Ensure your usernames show
-    data = data.replace(/@SxThunder/gi, "@SxThunder");
+    // Hide all https links
+    data = data.replace(/https?:\/\/\S+/g, "");
 
-    res.setHeader("Content-Type", "application/json");
+    // Add your credit everywhere
+    data = data + "\ncredit @OsxSpace";
+
     res.status(200).send(data);
 
   } catch (err) {
-    res.status(500).json({ error: "API Error", message: err.toString() });
+    res.status(500).send("Error: " + err.toString());
   }
-  }
+}
