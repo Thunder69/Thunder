@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tʜᴜɴᴅᴇʀ // dev.log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05020f;
+    --panel:#0b0620;
+    --panel2:#100a2b;
+    --cyan:#00fff2;
+    --pink:#ff2ec4;
+    --purple:#9d4bff;
+    --lime:#d4ff3d;
+    --text:#e9e6ff;
+    --dim:#8d86b8;
+    --line: rgba(157,75,255,0.25);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--text);
+    font-family:'JetBrains Mono', monospace;
+    line-height:1.7;
+    overflow-x:hidden;
+    background-image:
+      linear-gradient(rgba(157,75,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(157,75,255,0.06) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+  ::selection{ background:var(--pink); color:var(--void); }
+
+  a{ color:var(--cyan); text-decoration:none; }
+
+  .scanline{
+    position:fixed; inset:0; pointer-events:none; z-index:50;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:overlay; opacity:0.5;
+  }
+
+  header{
+    min-height:92vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 20px; position:relative;
+  }
+  .eyebrow{
+    font-size:12px; letter-spacing:5px; color:var(--dim); text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{ content:"> "; color:var(--lime); }
+
+  h1.glitch{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:clamp(2.6rem, 9vw, 6.5rem);
+    letter-spacing:2px;
+    color:var(--text);
+    position:relative;
+    text-shadow:
+      0 0 8px rgba(0,255,242,0.6),
+      0 0 22px rgba(157,75,255,0.5);
+    animation: flicker 6s infinite;
+  }
+  h1.glitch::before, h1.glitch::after{
+    content:attr(data-text);
+    position:absolute; left:0; top:0; width:100%;
+    clip-path: inset(0 0 0 0);
+  }
+  h1.glitch::before{
+    color:var(--pink);
+    animation: glitchTop 4.5s infinite linear alternate-reverse;
+    opacity:0.7;
+  }
+  h1.glitch::after{
+    color:var(--cyan);
+    animation: glitchBottom 3.8s infinite linear alternate-reverse;
+    opacity:0.7;
+  }
+  @keyframes glitchTop{
+    0%{ clip-path: inset(0 0 85% 0); transform:translate(-2px,-2px);}
+    20%{ clip-path: inset(10% 0 60% 0); transform:translate(2px,1px);}
+    40%{ clip-path: inset(40% 0 30% 0); transform:translate(-1px,2px);}
+    60%{ clip-path: inset(70% 0 5% 0); transform:translate(2px,-1px);}
+    80%{ clip-path: inset(20% 0 50% 0); transform:translate(-2px,1px);}
+    100%{ clip-path: inset(0 0 90% 0); transform:translate(1px,-2px);}
+  }
+  @keyframes glitchBottom{
+    0%{ clip-path: inset(85% 0 0 0); transform:translate(2px,2px);}
+    25%{ clip-path: inset(50% 0 20% 0); transform:translate(-2px,-1px);}
+    50%{ clip-path: inset(15% 0 65% 0); transform:translate(1px,-2px);}
+    75%{ clip-path: inset(60% 0 10% 0); transform:translate(-1px,2px);}
+    100%{ clip-path: inset(30% 0 45% 0); transform:translate(2px,1px);}
+  }
+  @keyframes flicker{
+    0%,19%,21%,23%,55%,57%,100%{ opacity:1; }
+    20%,22%,56%{ opacity:0.72; }
+  }
+
+  .tagline{
+    margin-top:22px; color:var(--dim); font-size:15px; max-width:560px;
+  }
+  .tagline .cursor{
+    display:inline-block; width:9px; height:16px; background:var(--lime);
+    margin-left:4px; vertical-align:middle; animation:blink 1s steps(2) infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .cta-row{ margin-top:34px; display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+  .btn{
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:13px;
+    letter-spacing:1px; text-transform:uppercase; padding:13px 26px;
+    border:1px solid var(--cyan); border-radius:2px; color:var(--cyan);
+    background:rgba(0,255,242,0.05); transition:all .25s ease; cursor:pointer;
+  }
+  .btn:hover{ background:var(--cyan); color:var(--void); box-shadow:0 0 25px rgba(0,255,242,0.7); }
+  .btn.alt{ border-color:var(--pink); color:var(--pink); background:rgba(255,46,196,0.05); }
+  .btn.alt:hover{ background:var(--pink); color:var(--void); box-shadow:0 0 25px rgba(255,46,196,0.7); }
+
+  section{ max-width:920px; margin:0 auto; padding:90px 24px; }
+  .section-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:40px; }
+  .section-num{ font-family:'Orbitron'; color:var(--purple); font-size:14px; }
+  .section-title{
+    font-family:'Orbitron'; font-weight:700; font-size:clamp(1.5rem,4vw,2.2rem);
+    color:var(--text); text-transform:uppercase; letter-spacing:2px;
+  }
+  .section-title span{ color:var(--cyan); }
+  .rule{ flex:1; height:1px; background:linear-gradient(90deg, var(--line), transparent); }
+
+  /* SKILLS */
+  .skill{ margin-bottom:30px; }
+  .skill-top{ display:flex; justify-content:space-between; font-size:14px; margin-bottom:9px; }
+  .skill-name{ color:var(--text); font-weight:700; letter-spacing:1px; }
+  .skill-pct{ color:var(--cyan); font-family:'Orbitron'; }
+  .bar-track{
+    height:14px; background:var(--panel); border:1px solid var(--line);
+    border-radius:8px; overflow:hidden; position:relative;
+  }
+  .bar-fill{
+    height:100%; width:0%; border-radius:8px;
+    background:linear-gradient(90deg, var(--purple), var(--cyan));
+    box-shadow:0 0 14px rgba(0,255,242,0.65);
+    position:relative;
+    transition:width 1.6s cubic-bezier(.16,.84,.44,1);
+  }
+  .bar-fill::after{
+    content:""; position:absolute; top:0; right:0; bottom:0; width:26px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.85));
+    filter:blur(2px);
+    animation:scan 2.2s ease-in-out infinite;
+  }
+  @keyframes scan{ 0%,100%{ opacity:0.2;} 50%{ opacity:0.9;} }
+
+  /* ABOUT / LONG DESCRIPTION */
+  .prose{ color:var(--dim); font-size:14.5px; }
+  .prose h3{
+    font-family:'Orbitron'; color:var(--pink); font-size:16px; letter-spacing:1px;
+    margin:34px 0 12px; text-transform:uppercase;
+  }
+  .prose h3:first-child{ margin-top:0; }
+  .prose p{ margin-bottom:14px; }
+  .prose code, .codeblock code{ color:var(--lime); }
+  .codeblock{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:16px 18px; margin:16px 0; font-size:13px; overflow-x:auto;
+    color:#c9c4f0;
+  }
+  .codeblock .muted{ color:var(--dim); }
+  .prose ul{ margin:10px 0 18px 20px; }
+  .prose li{ margin-bottom:6px; }
+
+  /* LINKS */
+  .link-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; }
+  .link-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:22px; transition:all .25s ease; position:relative; overflow:hidden;
+  }
+  .link-card:hover{ border-color:var(--cyan); transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,255,242,0.15); }
+  .link-card .tag{ font-size:11px; letter-spacing:2px; color:var(--purple); text-transform:uppercase; }
+  .link-card .val{ font-size:16px; font-weight:700; color:var(--text); margin-top:8px; word-break:break-all; }
+  .link-card a{ display:block; margin-top:12px; font-size:12px; color:var(--cyan); }
+  .status-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--lime); margin-right:6px; box-shadow:0 0 8px var(--lime); }
+
+  /* GITHUB */
+  .repo-box{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:24px;
+  }
+  .repo-status{
+    display:inline-block; font-size:11px; letter-spacing:1px; padding:4px 10px; border-radius:20px;
+    margin-bottom:14px; text-transform:uppercase; font-weight:700;
+  }
+  .repo-status.suspended{ background:rgba(255,46,196,0.12); color:var(--pink); border:1px solid var(--pink); }
+  .repo-status.soon{ background:rgba(212,255,61,0.1); color:var(--lime); border:1px solid var(--lime); }
+
+  /* COMING SOON TERMINAL */
+  .terminal{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden;
+  }
+  .term-bar{
+    display:flex; gap:7px; padding:12px 16px; background:var(--panel2); border-bottom:1px solid var(--line);
+  }
+  .dot{ width:11px; height:11px; border-radius:50%; }
+  .dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+  .term-body{ padding:22px; font-size:14px; }
+  .term-body .line{ margin-bottom:10px; }
+  .term-body .prompt{ color:var(--lime); }
+  .term-body .comment{ color:var(--dim); }
+
+  footer{
+    text-align:center; padding:50px 20px 70px; color:var(--dim); font-size:12px; letter-spacing:1px;
+  }
+  footer span{ color:var(--pink); }
+
+  @media (max-width:600px){
+    section{ padding:60px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<header>
+  <div class="eyebrow">system online // identity loaded</div>
+  <h1 class="glitch" data-text="Tʜᴜɴᴅᴇʀ">Tʜᴜɴᴅᴇʀ</h1>
+  <p class="tagline">Builder of things in Python, Java, C++ &amp; HTML. Running OSXSPACE and StarkXHub. Shipping soon.<span class="cursor"></span></p>
+  <div class="cta-row">
+    <a href="https://t.me/Osxspace" class="btn">Join Channel</a>
+    <a href="https://t.me/starkxhub" class="btn alt">Join Group</a>
+  </div>
+</header>
+
+<section id="skills">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <span class="section-title">Skill <span>Matrix</span></span>
+    <div class="rule"></div>
+  </div>
+
+  <div class="skill">
+    <div class="skill-top"><span class="skill-name">Python</span><span class="skill-pct" data-target="90">0%</span></div>
+    <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
+  </div>
+  <div class="skill">
+    <div class="skill-top"><span class="skill-name">HTML</span><span class="skill-pct" data-target="85">0%</span></div>
+    <div class="bar-track"><div class="bar-fill" data-width="85"></div></div>
+  </div>
+  <div class="skill">
+    <div class="skill-top"><span class="skill-name">Java</span><span class="skill-pct" data-target="80">0%</span></div>
+    <div class="bar-track"><div class="bar-fill" data-width="80"></div></div>
+  </div>
+  <div class="skill">
+    <div class="skill-top"><span class="skill-name">C++</span><span class="skill-pct" data-target="80">0%</span></div>
+    <div class="bar-track"><div class="bar-fill" data-width="80"></div></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <span class="section-title">About <span>&amp; Notes</span></span>
+    <div class="rule"></div>
+  </div>
+
+  <div class="prose">
+    <h3>Why Python</h3>
+    <p>Python is the language I reach for first. It reads almost like plain English, which means the gap between "I have an idea" and "I have working code" is small. That matters more than people admit — a language that gets out of your way lets you spend your time solving the actual problem instead of fighting syntax.</p>
+    <p>It's also genuinely everywhere. Automation scripts, backend APIs with <code>Flask</code> or <code>FastAPI</code>, Telegram bots (which I use a lot for OSXSPACE and StarkXHub), data work with <code>pandas</code>, and even small games with <code>pygame</code> — one language covers all of it. The standard library alone ("batteries included") handles files, networking, JSON, dates, and more without a single external package.</p>
+    <div class="codeblock">
+<span class="muted"># a five line Telegram-style bot skeleton</span><br>
+<code>import requests</code><br><br>
+<code>def send_message(token, chat_id, text):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;url = f"https://api.telegram.org/bot{token}/sendMessage"</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return requests.post(url, data={"chat_id": chat_id, "text": text})</code>
+    </div>
+    <p>What makes Python 90% of my stack isn't just familiarity — it's that it scales down for a quick script and scales up for a real backend. Same language, both ends.</p>
+
+    <h3>Where Java fits</h3>
+    <p>Java is stricter and more verbose than Python, but that strictness is a feature once a project grows. Static typing catches whole categories of bugs before the code ever runs, and the JVM's tooling — build systems like <code>Maven</code> / <code>Gradle</code>, and mature IDEs — makes large, multi-person codebases easier to reason about than looser dynamic languages.</p>
+    <p>I use Java mainly for Android-adjacent tools and anything that needs to run predictably at scale: object-oriented design, interfaces, and strong typing force you to plan a structure up front instead of discovering it halfway through, which is a different (and useful) way of thinking compared to Python's "just start writing" style.</p>
+    <ul>
+      <li>Python → fast to write, flexible, great for scripts / bots / APIs</li>
+      <li>Java → structured, verbose, great for large or long-lived applications</li>
+      <li>C++ → closer to the hardware, used when speed and memory control actually matter</li>
+      <li>HTML/CSS/JS → the front door — what a user actually sees and clicks</li>
+    </ul>
+
+    <h3>Express.js — how I use it for the web side</h3>
+    <p>When a project needs a lightweight web server or API instead of a full Python backend, I reach for <code>Express</code>, a minimal Node.js framework. It's a thin layer over Node's built-in HTTP server that gives you routing, middleware, and JSON handling without much boilerplate.</p>
+    <div class="codeblock">
+<span class="muted">// install</span><br>
+<code>npm init -y</code><br>
+<code>npm install express</code><br><br>
+<span class="muted">// server.js — a minimal Express app</span><br>
+<code>const express = require("express");</code><br>
+<code>const app = express();</code><br>
+<code>app.use(express.json());</code><br><br>
+<code>app.get("/", (req, res) => {</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;res.send("Tʜᴜɴᴅᴇʀ's server is live");</code><br>
+<code>});</code><br><br>
+<code>app.listen(3000, () => console.log("Running on port 3000"));</code><br><br>
+<span class="muted">// run it</span><br>
+<code>node server.js</code>
+    </div>
+    <p>That's the whole shape of it: define routes (<code>GET</code>, <code>POST</code>, etc.), attach middleware for things like JSON parsing or auth, and let Express handle the request/response cycle. It pairs naturally with a Python backend for heavier logic — Express handles the web-facing layer, Python handles processing, bots, or data work behind it.</p>
+
+    <h3>Cloning a repo from my GitHub</h3>
+    <p>Once a repo is public, getting a local copy is three commands:</p>
+    <div class="codeblock">
+<span class="muted"># 1. clone the repository</span><br>
+<code>git clone https://github.com/&lt;username&gt;/&lt;repo-name&gt;.git</code><br><br>
+<span class="muted"># 2. move into the project folder</span><br>
+<code>cd &lt;repo-name&gt;</code><br><br>
+<span class="muted"># 3. install dependencies, then run</span><br>
+<code>npm install&nbsp;&nbsp;&nbsp;&nbsp;<span class="muted"># if it's a Node/Express project</span></code><br>
+<code>pip install -r requirements.txt&nbsp;&nbsp;&nbsp;&nbsp;<span class="muted"># if it's Python</span></code>
+    </div>
+    <p>My previous main repository has been suspended, so it isn't live right now. A new one is being rebuilt from the ground up and will be made public soon — once it's up, the clone command above will point straight to it.</p>
+  </div>
+</section>
+
+<section id="links">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <span class="section-title">Find <span>Me</span></span>
+    <div class="rule"></div>
+  </div>
+  <div class="link-grid">
+    <div class="link-card">
+      <div class="tag">Telegram Channel</div>
+      <div class="val">OSXSPACE</div>
+      <a href="https://t.me/Osxspace">t.me/Osxspace →</a>
+    </div>
+    <div class="link-card">
+      <div class="tag">Telegram Group</div>
+      <div class="val">StarkXHub</div>
+      <a href="https://t.me/starkxhub">t.me/starkxhub →</a>
+    </div>
+    <div class="link-card">
+      <div class="tag">Telegram Username</div>
+      <div class="val">@SxThunder</div>
+      <a href="https://t.me/SxThunder">t.me/SxThunder →</a>
+    </div>
+  </div>
+</section>
+
+<section id="repo">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <span class="section-title">Git<span>Hub</span></span>
+    <div class="rule"></div>
+  </div>
+  <div class="repo-box">
+    <span class="repo-status suspended">Old Repo — Suspended</span>
+    <p style="color:var(--dim); font-size:14px; margin-bottom:16px;">The original repository was suspended and is no longer accessible.</p>
+    <span class="repo-status soon">New Repo — Coming Soon</span>
+    <p style="color:var(--dim); font-size:14px;">A rebuilt, cleaner version is in progress and will go public soon. Watch the Telegram channel above for the drop.</p>
+  </div>
+</section>
+
+<section id="status">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <span class="section-title">Build <span>Log</span></span>
+    <div class="rule"></div>
+  </div>
+  <div class="terminal">
+    <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+    <div class="term-body">
+      <div class="line"><span class="prompt">$</span> status --apps</div>
+      <div class="line comment">→ My Apps ......... Coming Soon</div>
+      <div class="line"><span class="prompt">$</span> status --website</div>
+      <div class="line comment">→ My Web .......... Coming Soon</div>
+      <div class="line"><span class="prompt">$</span> status --more</div>
+      <div class="line comment">→ More things ..... Coming Soon</div>
+      <div class="line"><span class="prompt">$</span> <span style="animation:blink 1s steps(2) infinite;">▌</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  built by <span>Tʜᴜɴᴅᴇʀ</span> — OSXSPACE × StarkXHub
+</footer>
+
+<script>
+  const bars = document.querySelectorAll('.bar-fill');
+  const pcts = document.querySelectorAll('.skill-pct');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const track = entry.target;
+        const fill = track.querySelector('.bar-fill');
+        const pctEl = track.previousElementSibling ? null : null;
+      }
+    });
+  });
+
+  // animate on scroll into view
+  const skillEls = document.querySelectorAll('.skill');
+  const skillObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const fill = entry.target.querySelector('.bar-fill');
+        const pctEl = entry.target.querySelector('.skill-pct');
+        const target = parseInt(fill.dataset.width, 10);
+        fill.style.width = target + '%';
+
+        let current = 0;
+        const step = Math.max(1, Math.round(target/40));
+        const timer = setInterval(()=>{
+          current += step;
+          if(current >= target){ current = target; clearInterval(timer); }
+          pctEl.textContent = current + '%';
+        }, 1600/ (target/step) );
+        skillObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  skillEls.forEach(el => skillObserver.observe(el));
+</script>
+</body>
+</html>
